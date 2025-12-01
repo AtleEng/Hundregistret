@@ -1,0 +1,73 @@
+public class Dog
+{
+    // konstanter:
+    static final float DACHSHUND_TAIL_LENGTH = 3.7f;
+    // statiska variabler:
+
+    // instansvariabler:
+    private final String name;
+    private final String breed;
+    private final float  weight; //kg
+    
+    private int age;
+
+    // konstruktorer
+    
+    // Use for copy
+    public Dog(Dog other) 
+    {
+        this.name = other.name;
+        this.breed = other.breed;
+        this.age = other.age;
+        this.weight = other.weight;
+    }
+    // Use for new creation
+    public Dog(String name, String breed, int age, float weight)
+    {
+        this.name =  App.normalize(name);
+        this.breed = App.normalize(breed);
+        this.age = age;
+        this.weight = weight;
+    }
+
+    // metoder:
+    public String getName()
+    {
+        return name;
+    }
+    public String getBreed()
+    {
+        return breed;
+    }
+    public int getAge()
+    {
+        return age;
+    }
+    public float getWeight()
+    {
+        return weight;
+    }
+    public float getTailLength() // in cm
+    {
+        if("tax".equals(breed)) //TODO make it work with diffrent names
+        {
+            return DACHSHUND_TAIL_LENGTH;
+        }
+        return (age * weight) / 10;
+    }
+
+    public void updateAge(int newValue)
+    {
+        if(newValue < age)
+        {
+            //TODO inform user
+            return;
+        }
+        age = newValue;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Dog:  %s, Breed: %s, Age: %d years, Weight: %.2f kg", name, breed, age, weight);
+    }
+}
