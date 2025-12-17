@@ -11,6 +11,8 @@ public class Dog
     
     private int age;
 
+    private Owner owner;
+
     // konstruktorer
     
     // Use for copy
@@ -20,6 +22,7 @@ public class Dog
         this.breed = other.breed;
         this.age = other.age;
         this.weight = other.weight;
+        this.owner = other.owner;
     }
     // Use for new creation
     public Dog(String name, String breed, int age, float weight)
@@ -28,6 +31,14 @@ public class Dog
         this.breed = App.normalize(breed);
         this.age = age;
         this.weight = weight;
+    }
+    public Dog(String name, String breed, int age, float weight, Owner owner)
+    {
+        this.name =  App.normalize(name);
+        this.breed = App.normalize(breed);
+        this.age = age;
+        this.weight = weight;
+        SetOwner(owner);
     }
 
     // metoder:
@@ -56,11 +67,27 @@ public class Dog
         return (age * weight) / 10;
     }
 
+    public Owner getOwner()
+    {
+        return owner;
+    }
+
+    public final boolean SetOwner(Owner owner)
+    {
+        if(this.owner == owner)
+        {
+            return false;
+        }
+        System.out.println(String.format("%s new owner is: %s", name, owner.getName()));
+        this.owner = owner;
+        return true;
+    }
+
     public void updateAge(int newValue)
     {
         if(newValue < age)
         {
-            //TODO inform user
+            System.out.print(String.format("Updated age of %s", name));
             return;
         }
         age = newValue;
@@ -68,6 +95,6 @@ public class Dog
 
     @Override
     public String toString() {
-        return String.format("Dog:  %s, Breed: %s, Age: %d years, Weight: %.2f kg", name, breed, age, weight);
+        return String.format(name);
     }
 }

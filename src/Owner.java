@@ -20,6 +20,7 @@ public class Owner
 
         for (int i = 0; i < dogs.length && i < 7; i++) {
             this.dogs[i] = new Dog(dogs[i]);
+            this.dogs[i].SetOwner(this);
         }
     }
 
@@ -36,13 +37,17 @@ public class Owner
     }
 
     //get the pointer to a dog
+    public Dog getDog(int index)
+    {
+        return dogs[index];
+    }
     public Dog getDog(String name)
     {
         for (Dog dog : dogs) 
         {
             if (dog.getName().equals(name))
             {
-                System.out.println("Find dog:" + name);
+                System.out.println("Found dog: " + name);
                 return dog;
             }
         }
@@ -61,6 +66,7 @@ public class Owner
 
         dogs = Arrays.copyOf(dogs, dogs.length + 1);
         dogs[dogs.length - 1] = new Dog(dog);
+        dogs[dogs.length - 1].SetOwner(this);
 
         System.out.println("Adding: " + dog.getName() + " to owner: " + name);
         return true;
@@ -73,7 +79,7 @@ public class Owner
         {
             if(dogs[i].getName().equals(name))
             {
-                System.out.println("Removed dog:" + name);
+                System.out.println("Removed dog: " + name);
                 dogs[i] = dogs[dogs.length - 1];
                 dogs = Arrays.copyOf(dogs, dogs.length - 1);
                 return true;
@@ -92,12 +98,6 @@ public class Owner
 
     @Override
     public String toString() {
-        String s = String.format("Owner: %s (%d dogs)", name, dogs.length);
-
-        for(Dog dog: dogs)
-        {
-            s += String.format("\n  %s", dog.toString());
-        }
-        return s;
+        return String.format(name);
     }
 }
