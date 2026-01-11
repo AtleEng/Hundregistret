@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class OwnerCollection {
     // konstanter:
@@ -8,22 +9,27 @@ public class OwnerCollection {
 
     // instansvariabler:
 
-    private static ArrayList<Owner> owners = new ArrayList<Owner>();
+    private ArrayList<Owner> owners = new ArrayList<Owner>();
 
     // konstruktorer
+    public OwnerCollection()
+    {
 
+    }
     // metoder:
 
-    public static boolean addOwner(Owner owner) {
+    public boolean addOwner(Owner owner) {
         if (owner != null) {
             owners.add(owner);
+            System.out.println("Adding owner: "+ owner.getName());
             return true;
         }
         System.out.println("Owner is null!");
         return false;
     }
 
-    public static boolean removeOwner(String ownerName) {
+    public boolean removeOwner(String ownerName) {
+        ownerName = DogRegister.normalize(ownerName);
         for (int i = 0; i < owners.size(); i++) {
             if (owners.get(i).getName().equals(ownerName)) {
                 owners.remove(owners.get(i));
@@ -35,11 +41,15 @@ public class OwnerCollection {
         return false;
     }
 
-    public static boolean removeOwner(Owner owner) {
+    public boolean removeOwner(Owner owner) {
         return removeOwner(owner.getName());
     }
 
-    public static boolean containsOwner(String ownerName) {
+    public boolean containsOwner(String ownerName) {
+        if(owners.size() <= 0)
+        {
+            return false;
+        }
         for (int i = 0; i < owners.size(); i++) {
             if (owners.get(i).getName().equals(ownerName)) {
                 System.out.println("Found owner: " + ownerName);
@@ -50,11 +60,11 @@ public class OwnerCollection {
         return false;
     }
 
-    public static boolean containsOwner(Owner owner) {
+    public boolean containsOwner(Owner owner) {
         return containsOwner(owner.getName());
     }
 
-    public static Owner getOwner(String ownerName)
+    public Owner getOwner(String ownerName)
     {
         for(int i = 0; i < owners.size(); i++)
         {
@@ -68,12 +78,13 @@ public class OwnerCollection {
         return null;
     }
 
-    public static ArrayList<Owner> getOwners()
+    public ArrayList<Owner> getAllOwners()
     {
+        owners.sort(Comparator.comparing(Owner::getName, String.CASE_INSENSITIVE_ORDER));
         return owners;
     }
 
-    public static Dog[] getAllDogs()
+    public Dog[] getAllDogs()
     {
         ArrayList<Dog> dogs = new ArrayList<Dog>();
         for (int i = 0; i < owners.size(); i++) 
@@ -86,7 +97,7 @@ public class OwnerCollection {
         return dogs.toArray(new Dog[dogs.size()]);
     }
 
-    public static int size()
+    public int size()
     {
         return owners.size();
     }

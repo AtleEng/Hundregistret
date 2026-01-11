@@ -1,50 +1,67 @@
 import java.util.Comparator;
 
 public class DogSorter {
-    public static Dog[] Sort(SortingAlgorithm algoritm, Comparator<Dog> comparator, Dog... dogs) {
-
+    public static Dog[] sort(SortingAlgorithm algoritm, Comparator<Dog> comparator, Dog... dogs) {
         switch (algoritm) {
-            case BUBBLE_SORT: SortByBubble(comparator, dogs); break;
-        
+            case SortingAlgorithm.BUBBLE_SORT:
+                sortByBubble(comparator, dogs);
+                break;
+            case SortingAlgorithm.QUICK_SORT:
+                sortByQuick(comparator, 0, dogs.length-1, dogs);
+                break;
             default:
                 break;
         }
         return dogs;
     }
 
-    static void SortByBubble(Comparator<Dog> comparator, Dog... dogs)
-    {
-        int nDogs = dogs.length;
+    private static void sortByBubble(Comparator<Dog> comparator, Dog... dogs) {
+        int n = dogs.length;
         boolean swapped;
 
-        for (int i = 0; i < nDogs - 1; i++)
-        {
+        for (int i = 0; i < n - 1; i++) {
             swapped = false;
-            for (int j = 0; j < nDogs - i - 1; j++)
-            {
-                if(1 < comparator.compare(dogs[j], dogs[j + 1]))
-                {
-                    //Swap elements
-                    Dog temp = dogs[j + 1];
-                    dogs[j + 1] = dogs[j];
-                    dogs[j] = temp;
+            for (int j = 0; j < n - i - 1; j++) {
+                if (0 < comparator.compare(dogs[j], dogs[j + 1])) {
+                    swapArray(dogs, j, j+1);
                     swapped = true;
                 }
             }
-
-            if(!swapped) {break;}
+            if (!swapped) {
+                break;
+            }
         }
     }
 
-    class SortByAge implements Comparator<Dog> {
+    private static void sortByQuick(Comparator<Dog> comparator, int low, int high, Dog... dogs) {
+        if (low < high) {
+            
+            int pivotIndex = partition(comparator, dogs, low, high);
 
-        public int compare(Dog a, Dog b) {
-            return a.getAge() - b.getAge();
+            // recursion calls
+            sortByQuick(comparator, low, pivotIndex - 1, dogs);
+            sortByQuick(comparator, pivotIndex + 1, high, dogs);
         }
     }
-        public static enum SortingAlgorithm {
-            BUBBLE_SORT,
-            INSERTION_SORT,
-            SELECTION_SORT
+
+    private static int partition(Comparator<Dog> comparator, Dog[] dogs, int low, int high) {    
+        Dog pivot = dogs[high];
+        
+        int smallerIndex = low - 1;
+
+        for (int j = low; j <= high - 1; j++) {
+            if (0 > comparator.compare(dogs[j], pivot)) {
+                smallerIndex++;
+                swapArray(dogs, smallerIndex, j);
+            }
         }
+        swapArray(dogs, smallerIndex + 1, high);  
+        return smallerIndex + 1;
+    }
+
+    private static void swapArray(Dog[] dogs, int i, int j) {
+        Dog temp = dogs[i];
+        dogs[i] = dogs[j];
+        dogs[j] = temp;
+    }
 }
