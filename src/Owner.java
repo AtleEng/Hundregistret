@@ -1,4 +1,7 @@
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 public class Owner {
     private static final int MAX_DOGS = 7;
     private final String name;
@@ -61,6 +64,8 @@ public class Owner {
                 addedDogs++;
             }
         }
+
+        Arrays.sort(newDogs, Comparator.comparing(Dog::getName));
         return newDogs;
     }
 

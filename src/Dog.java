@@ -55,16 +55,13 @@ public class Dog {
         if (this.owner == owner) {
             return false;
         }
-
         if (this.owner != null) {
             this.owner.removeDog(this);
         }
         this.owner = owner;
-
         if (owner != null && !owner.ownsDog(this)) {
             owner.addDog(this);
         }
-
         return true;
     }
 
