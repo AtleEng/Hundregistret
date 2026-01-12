@@ -1,30 +1,15 @@
 public class Dog {
-    // konstanter:
-    private static final double DACHSHUND_TAIL_LENGTH = 3.7f;
-    // statiska variabler:
+    private static final double DACHSHUND_TAIL_LENGTH = 3.7;
 
-    // instansvariabler:
     private final String name;
     private final String breed;
-    private final double weight; // kg
+    private final double weight;
 
     private int age;
-
     private Owner owner;
 
-    // konstruktorer
-
-    // Use for copy
-    public Dog(Dog other) {
-        this.name = other.name;
-        this.breed = other.breed;
-        this.age = other.age;
-        this.weight = other.weight;
-        this.owner = other.owner;
-    }
-
     // Use for new creation
-    public Dog(String name, String breed, int age, float weight) {
+    public Dog(String name, String breed, int age, double weight) {
         this.name = DogRegister.normalize(name);
         this.breed = DogRegister.normalize(breed);
         this.age = age;
@@ -39,7 +24,6 @@ public class Dog {
         setOwner(owner);
     }
 
-    // metoder:
     public String getName() {
         return name;
     }
@@ -56,10 +40,8 @@ public class Dog {
         return weight;
     }
 
-    public double getTailLength() // in cm
-    {
-        String s = breed.toUpperCase();
-        if ("TAX".equals(s) || "DACHSHUND".equals(s)) {
+    public double getTailLength() {
+        if (breed.equalsIgnoreCase("TAX") || breed.equalsIgnoreCase("DACHSHUND")) {
             return DACHSHUND_TAIL_LENGTH;
         }
         return (age * weight) / 10;
@@ -87,13 +69,13 @@ public class Dog {
     }
 
     public void updateAge(int value) {
-        if (value > 0) // förhindra overflow
-        {
+        if (value <= 0)
+            return;
+
+        if (age > Integer.MAX_VALUE - value) {
+            age = Integer.MAX_VALUE;
+        } else {
             age += value;
-            if (age < 0) // TODO fix this shitcode (need unsigned int)
-            {
-                age = Integer.MAX_VALUE;
-            }
         }
     }
 

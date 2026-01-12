@@ -1,26 +1,20 @@
 
 public class Owner {
-    // konstanter:
-
-    // statiska variabler:
-
-    // instansvariabler:
+    private static final int MAX_DOGS = 7;
     private final String name;
 
     private Dog[] dogs;
     private int numberOfDogs = 0;
 
-    // konstruktorer
     public Owner(String name, Dog... dogs) {
         this.name = DogRegister.normalize(name);
-        this.dogs = new Dog[7];
+        this.dogs = new Dog[MAX_DOGS];
 
         for (int i = 0; i < dogs.length; i++) {
             addDog(dogs[i]);
         }
     }
 
-    // metoder:
     public String getName() {
         return name;
     }
@@ -33,7 +27,7 @@ public class Owner {
     }
 
     public boolean ownsMaxDogs() {
-        if (numberOfDogs < 7) {
+        if (numberOfDogs < MAX_DOGS) {
             return false;
         }
         return true;
@@ -47,21 +41,17 @@ public class Owner {
         }
         return false;
     }
-
     public boolean ownsDog(String name) {
         name = DogRegister.normalize(name);
         for (Dog dog : dogs) {
-            if (dog == null) {
-                return false;
-            }
-            if (dog.getName().equals(name)) {
+            if (dog != null && dog.getName().equals(name)) {
                 return true;
             }
         }
         return false;
     }
 
-    // get a copy of owners dogs
+    // get owners dogs in a array
     public Dog[] getDogs() {
         Dog[] newDogs = new Dog[numberOfDogs];
         int addedDogs = 0;
@@ -74,20 +64,20 @@ public class Owner {
         return newDogs;
     }
 
-    // get the pointer to a dog
+    // get a dog from owner or return null
     public Dog getDog(int index) {
+        if (index < 0 || index >= numberOfDogs) {
+            return null;
+        }
         return dogs[index];
     }
-
     public Dog getDog(String name) {
         name = DogRegister.normalize(name);
         for (Dog dog : dogs) {
             if (dog.getName().equals(name)) {
-                System.out.println("Found dog: " + name);
                 return dog;
             }
         }
-        System.out.println(this.name + " has no dog named:" + name);
         return null;
     }
 
@@ -123,7 +113,6 @@ public class Owner {
         }
         return false;
     }
-
     public boolean removeDog(Dog dog) {
         if (dog == null)
             return false;
@@ -149,10 +138,9 @@ public class Owner {
         String s = name;
         for (Dog dog : dogs) {
             if (dog != null) {
-                s += " ";
-                s += dog.getName();
+                s += " " + dog.getName();
             }
         }
-        return String.format(s);
+        return s;
     }
 }

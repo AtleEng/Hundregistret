@@ -3,46 +3,39 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class OwnerCollection {
-    // konstanter:
-
-    // statiska variabler:
-
-    // instansvariabler:
 
     private ArrayList<Owner> owners = new ArrayList<Owner>();
 
-    // konstruktorer
-    public OwnerCollection()
-    {
-
-    }
-    // metoder:
+    public OwnerCollection(){}
 
     public boolean addOwner(Owner owner) {
         if (owner != null) {
             owners.add(owner);
-            System.out.println("Adding owner: "+ owner.getName());
             return true;
         }
-        System.out.println("Owner is null!");
         return false;
     }
 
     public boolean removeOwner(String ownerName) {
         ownerName = DogRegister.normalize(ownerName);
-        for (int i = 0; i < owners.size(); i++) {
-            if (owners.get(i).getName().equals(ownerName)) {
-                owners.remove(owners.get(i));
-                System.out.println("Removed owner: " + ownerName);
+        for (Owner owner : owners) {
+
+            if (owner.getName().equals(ownerName)) {
+                owners.remove(owner);
                 return true;
             }
         }
-        System.out.println("Collection has no owner named:" + ownerName);
         return false;
     }
 
     public boolean removeOwner(Owner owner) {
-        return removeOwner(owner.getName());
+        if(owners.contains(owner))
+        {
+            owners.remove(owner);
+            return true;
+        }
+        
+        return false;
     }
 
     public boolean containsOwner(String ownerName) {
@@ -52,11 +45,9 @@ public class OwnerCollection {
         }
         for (int i = 0; i < owners.size(); i++) {
             if (owners.get(i).getName().equals(ownerName)) {
-                System.out.println("Found owner: " + ownerName);
                 return true;
             }
         }
-        System.out.println("Collection has no owner named:" + ownerName);
         return false;
     }
 
@@ -70,11 +61,9 @@ public class OwnerCollection {
         {
             if(owners.get(i).getName().equals(ownerName))
             {
-                System.out.println("Found owner: " + ownerName);
                 return owners.get(i);
             }
         }
-        System.out.println("Collection has no owner named:" + ownerName);
         return null;
     }
 

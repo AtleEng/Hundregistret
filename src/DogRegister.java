@@ -1,3 +1,4 @@
+
 import java.util.Arrays;
 
 public class DogRegister {
@@ -56,9 +57,8 @@ public class DogRegister {
                 System.out.println("Exiting program...");
                 shouldClose = true;
                 return;
-
             default:
-                System.out.println("Error: Not a valid command. (Use help to list commands)");
+                System.out.println("Error: Not a valid command. (Use 'help')");
         }
     }
 
@@ -67,27 +67,36 @@ public class DogRegister {
         String name = input.readString("Enter name");
         name = DogRegister.normalize(name);
 
-        if(!owners.containsOwner(name))
-        {
+        if (!owners.containsOwner(name)) {
             Owner newOwner = new Owner(name);
             owners.addOwner(newOwner);
-        }else{
-            System.out.print("Fel: owner already exist!");
+            System.out.println(name + " has been added");
+        } else {
+            System.out.println("Fel: owner already exist!");
         }
     }
 
     private static void removeOwner() {
+        if (!ownersExist())
+            return;
+
         String name = input.readString("Enter name");
 
-        owners.removeOwner(name);
+        if (owners.removeOwner(name)) {
+            System.out.println(name + " was removed");
+        } else {
+            System.out.println("Error: " + name + " doesn't exist");
+        }
     }
 
     private static void addDog() {
+        if (!ownersExist())
+            return;
 
-        String owner = input.readString("Enter owner");
-        owner = DogRegister.normalize(owner);
+        String ownerName = input.readString("Enter owner");
+        ownerName = DogRegister.normalize(ownerName);
 
-        if (owners.containsOwner(owner)) {
+        if (owners.containsOwner(ownerName)) {
             String name = input.readString("Enter name");
             name = DogRegister.normalize(name);
 
@@ -97,39 +106,67 @@ public class DogRegister {
             int age = input.readInt("Enter age");
             double weight = input.readDouble("Enter weight");
 
-            Dog newDog = new Dog(name, breed, age, weight, owners.getOwner(owner));
-            owners.getOwner(owner).addDog(newDog);
+            Dog newDog = new Dog(name, breed, age, weight, owners.getOwner(ownerName));
+            owners.getOwner(ownerName).addDog(newDog);
+        } else {
+            System.out.println("Error: " + ownerName + " doesn't exist");
         }
     }
 
     private static void removeDog() {
-        String owner = input.readString("Enter owner");
-        owner = DogRegister.normalize(owner);
-        if (owners.containsOwner(owner)) {
+        if (!ownersExist())
+            return;
+
+        String ownerName = input.readString("Enter owner");
+        ownerName = DogRegister.normalize(ownerName);
+        if (owners.containsOwner(ownerName)) {
             String name = input.readString("Enter dog");
             name = DogRegister.normalize(name);
-
-            owners.getOwner(owner).removeDog(name);
+            if (owners.getOwner(ownerName).ownsDog(name)) {
+                owners.getOwner(ownerName).removeDog(name);
+                System.out.println(name + " was removed");
+            } else {
+                System.out.println("Error: " + name + " doesn't exist");
+            }
+        } else {
+            System.out.println("Error: " + ownerName + " doesn't exist");
         }
     }
 
     private static void changeOwner() {
+        if (!ownersExist())
+            return;
+
         String oldOwner = input.readString("Enter current owner");
         oldOwner = DogRegister.normalize(oldOwner);
         if (owners.containsOwner(oldOwner)) {
+
             String name = input.readString("Enter dog");
             name = DogRegister.normalize(name);
-            Dog dog = owners.getOwner(oldOwner).getDog(name);
+            if (owners.getOwner(oldOwner).ownsDog(name)) {
 
-            String newOwner = input.readString("Enter new owner");
-            newOwner = DogRegister.normalize(newOwner);
+                String newOwner = input.readString("Enter new owner");
+                newOwner = DogRegister.normalize(newOwner);
+                if (owners.containsOwner(newOwner)) {
 
-            owners.getOwner(oldOwner).removeDog(dog);
-            owners.getOwner(newOwner).addDog(dog);
+                    Dog dog = owners.getOwner(oldOwner).getDog(name);
+                    owners.getOwner(oldOwner).removeDog(dog);
+                    owners.getOwner(newOwner).addDog(dog);
+                } else {
+                    System.out.println("Error: " + newOwner + " doesn't exist");
+                }
+            } else {
+                System.out.println("Error: " + name + " doesn't exist");
+            }
+        } else {
+            System.out.println("Error: " + oldOwner + " doesn't exist");
         }
     }
 
     private static void listOwners() {
+        if (!ownersExist())
+            return;
+
         Owner[] ownerArray = new Owner[owners.getAllOwners().size()];
         ownerArray = owners.getAllOwners().toArray(ownerArray);
         int ownerPadding = 0;
@@ -167,12 +204,28 @@ public class DogRegister {
     }
 
     private static void listDogs() {
-        Dog[] dogs = owners.getAllDogs();
-        int minLength = input.readInt("Enter minimum tail length");
-        Arrays.sort(dogs, new TailNameComparator());
+        if (!ownersExist())
+            return;
 
-        int namePadding = 0;
-        int breedPadding = 0;
+        Dog[] dogs = owners.getAllDogs();
+        double minLength = input.readDouble("Enter minimum tail length");
+        DogSorter.sort(SortingAlgorithm.QUICK_SORT, new TailNameComparator(), dogs);
+
+        if (minLength > 0) { // skip if unnessesery
+            int passingDogs = 0;
+
+            for (Dog dog : dogs) { // get amount of dog with correct length
+                if (dog.getTailLength() >= minLength) {
+                    passingDogs++;
+                }
+            }
+            dogs = Arrays.copyOfRange(dogs,
+                    dogs.length - passingDogs,
+                    dogs.length);
+        }
+
+        int namePadding = 6;  // char length "Name: "
+        int breedPadding = 7; // char length "Breed: "
         for (Dog dog : dogs) {
             namePadding = Math.max(namePadding, dog.getName().length());
             breedPadding = Math.max(breedPadding, dog.getBreed().length());
@@ -201,6 +254,9 @@ public class DogRegister {
     }
 
     private static void increaseAge() {
+        if (!ownersExist())
+            return;
+
         Dog[] dogs = owners.getAllDogs();
 
         for (Dog dog : dogs) {
@@ -210,19 +266,19 @@ public class DogRegister {
 
     private static void helpPopup() {
         System.out.println("The following commands are available:");
-        System.out.println("* Add owner     (AO)");
-        System.out.println("* Remove owner  (RO)");
-        System.out.println("* Add dog       (AD)");
-        System.out.println("* Remove dog    (RD)");
-        System.out.println("* Change owner  (CO)");
-        System.out.println("* List owners   (LO)");
-        System.out.println("* List dogs     (LD)");
-        System.out.println("* Update age    (UA)");
+        System.out.println("* Add owner");
+        System.out.println("* Remove owner");
+        System.out.println("* Add dog");
+        System.out.println("* Remove dog");
+        System.out.println("* Change owner");
+        System.out.println("* List owners");
+        System.out.println("* List dogs");
+        System.out.println("* Update age");
         System.out.println("* Help");
         System.out.println("* Exit");
-        System.out.println("* Load (Debug)");
     }
 
+    // input command "load" to use
     private static void loadDebugData() {
         Dog[] allDogs = new Dog[8];
         allDogs[0] = new Dog("Alfa", "Beagle", 3, 4.8f);
@@ -244,10 +300,23 @@ public class DogRegister {
         owners.addOwner(allOwners[1]);
         owners.addOwner(allOwners[2]);
         owners.addOwner(allOwners[3]);
+
+        System.out.println("Testdata loaded!");
     }
 
+    private static boolean ownersExist() {
+        if (owners.size() == 0) {
+            System.out.println("Error: no owners exist in registry");
+            return false;
+        }
+        return true;
+    }
+
+    // * jag valde att inte skapa en utils.java eftersom det är ett mindre projekt
+    // normalize(exAmPLE) -> Example
     public static String normalize(String s) {
         s = s.trim().toLowerCase();
         return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
+
 }

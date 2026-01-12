@@ -7,7 +7,7 @@ public class InputReader {
 
     public InputReader() {
         if (isInstantiated) {
-            throw new IllegalStateException("fel, endast en InpuReader får finnas");
+            throw new IllegalStateException("Error: only one inputReader can exist");
         }
         isInstantiated = true;
         this.scanner = new Scanner(System.in);
@@ -15,7 +15,7 @@ public class InputReader {
 
     public InputReader(Scanner s) {
         if (isInstantiated) {
-            throw new IllegalStateException("fel, endast en InpuReader får finnas");
+            throw new IllegalStateException("Error: only one inputReader can exist");
         }
         isInstantiated = true;
         this.scanner = s;
@@ -29,19 +29,17 @@ public class InputReader {
 
             try {
                 i = scanner.nextInt();
+                if (i < 0) {
+                    System.out.println("Error: invalid input!");
+                } else {
+                    done = true;
+                }
 
             } catch (Exception e) {
-                System.out.println("fel input!");
+                System.out.println("Error: invalid input!");
             }
-            if (i < 0) {
-                System.out.println("fel input!");
-            } else {
-                done = true;
-            }
+            scanner.nextLine();
         }
-
-        // System.out.println("?>");
-        scanner.nextLine();
         return i;
     }
 
@@ -53,18 +51,17 @@ public class InputReader {
 
             try {
                 d = scanner.nextDouble();
+                if (d < 0) {
+                    System.out.println("Error: invalid input!");
+                } else {
+                    done = true;
+                }
 
             } catch (Exception e) {
-                System.out.println("fel input!");
+                System.out.println("Error: invalid input!");
             }
-            if (d < 0) {
-                System.out.println("fel input!");
-            } else {
-                done = true;
-            }
+            scanner.nextLine();
         }
-
-        scanner.nextLine();
         return d;
     }
 
